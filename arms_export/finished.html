@@ -91,7 +91,7 @@
       window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
-      var light = new THREE.HemisphereLight("rgb(255, 255, 255)", "rgb(51, 51, 51)", 0.3);
+      var light = new THREE.HemisphereLight("rgb(255, 255, 255)", "rgb(51, 51, 51)", 0.5);
       // var light = new THREE.AmbientLight( 0x272727, 0.1 ); // soft white light 
       scene.add(light);
 
@@ -152,7 +152,7 @@
         var columnmaterial = new THREE.MeshPhongMaterial({
           color: "rgb(255, 255, 255)",
           emissive: "#000000",
-          shininess: 0,
+          shininess: 1,
         });
 
         yscale.ticks(10).forEach(function(t, i, a){
@@ -175,7 +175,7 @@
             
             { 
               color: "rgb(0, 0, 0)", 
-              linewidth: 3.5,
+              linewidth: 3,
               linejoin: "square"
 
             } 
@@ -183,6 +183,22 @@
           // var lineMaterial = new THREE.LineBasicMaterial( { color: "rgb(255, 255, 255)" } );
           var line = new THREE.Line( lineGeometry, lineMaterial );
           scene2.add(line);
+
+        });
+
+
+        xscale.ticks(10).forEach(function(t, i, a){
+          //Draw label
+          var label = createType({
+            color: "rgb(255, 255, 255)",
+            text: "" + (t), 
+            size: 1
+          });
+          var xOffset = ( label.geometry.boundingBox.max.x - label.geometry.boundingBox.min.x );
+          // label2.position.set(-chartwidth/2 - 2, xscale(t) , 0);
+          label.position.set(xscale(t), 0 + marginbottom, 0);
+          scene2.add(label);
+
 
         });
 
@@ -210,18 +226,18 @@
       scene.add(title);
 
       var xzerolabel = createType({text: "1950", size: 1});
-      xzerolabel.position.set(-chartwidth/2 - 1, 2, 0);
-      scene.add(xzerolabel);
+      xzerolabel.position.set(-chartwidth/2 - 1.5, 2, 0);
+      // scene.add(xzerolabel);
 
       var x100label = createType({text: "2014", size: 1});
       var xOffset = ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       x100label.position.set(chartwidth/2 - xOffset, 2, 0);
-      scene.add(x100label);
+      // scene.add(x100label);
 
       var srctext = createType({text: "Source: SIPRI Arms Transfers Database", size: 1});
       var xOffset = 0.5 * ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       srctext.position.set(0 - xOffset, 1, 0);
-      scene.add(srctext);
+      // scene.add(srctext);
 
     }
 
