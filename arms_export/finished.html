@@ -18,13 +18,6 @@
         bottom: 0;
       }
 
-/*      .yscale path,
-      .yscale line {
-          fill: none;
-          stroke: #e7eff1;
-          stroke-width: 1;
-          shape-rendering: crispEdges;
-      }*/
     </style>
   </head>
   <body>
@@ -75,7 +68,7 @@
       controls = new THREE.OrbitControls(camera, element);
       controls.rotateUp(Math.PI / 4);
       controls.target.set(
-        camera.position.x,
+        camera.position.x ,
         camera.position.y + 0.1,
         camera.position.z - 0.1
       );
@@ -98,11 +91,12 @@
       window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
-      var light = new THREE.HemisphereLight("rgb(255, 255, 255)", "rgb(255, 255, 255)", 0.3);
+      var light = new THREE.HemisphereLight("rgb(255, 255, 255)", "rgb(51, 51, 51)", 0.3);
+      // var light = new THREE.AmbientLight( 0x272727, 0.1 ); // soft white light 
       scene.add(light);
 
       var objlight = new THREE.PointLight("rgb(255, 255, 255)", 0.5);
-      objlight.position.set(0, 80, 70);
+      objlight.position.set(0, 50, 70);
       scene.add(objlight);
 
       var texture = THREE.ImageUtils.loadTexture(
@@ -110,7 +104,7 @@
       );
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat = new THREE.Vector2(50, 50);
+      texture.repeat = new THREE.Vector2(20, 50);
       texture.anisotropy = renderer.getMaxAnisotropy();
 
       spectexture = THREE.ImageUtils.loadTexture(
@@ -122,11 +116,11 @@
       spectexture.anisotropy = renderer.getMaxAnisotropy();
 
       var material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
+        color: "black",
         specular: 0xffffff,
         shininess: 3,
         shading: THREE.FlatShading,
-        map: texture,
+        // map: texture,
         specularMap: spectexture
       });
 
@@ -146,7 +140,7 @@
       /////// START CONTENT HERE ////////
 
       d3.csv('data.csv', arms, function(data){
-        xscale.domain([0, data.length - 1]);
+        xscale.domain([0, data.length ]);
         // yscale.domain([0, d3.max(data, function(d){ return d.value; })]);
 
         // xscale.domain(d3.extent(data, function(d) { return d.year -1; }));
@@ -157,12 +151,13 @@
 
         var columnmaterial = new THREE.MeshPhongMaterial({
           color: "rgb(255, 255, 255)",
-          emissive: "#000000"
+          emissive: "#000000",
+          shininess: 0,
         });
 
         yscale.ticks(10).forEach(function(t, i, a){
           //Draw label
-          var label = createType({text: "" + (t), size: 1.12});
+          var label = createType({text: "" + (t), size: 1});
           var xOffset = ( label.geometry.boundingBox.max.x - label.geometry.boundingBox.min.x );
           label.position.set(-chartwidth/2 - xOffset - 2.5, yscale(t) + marginbottom - 0.5, 0);
           scene.add(label);
@@ -170,13 +165,23 @@
           //Draw line
           var lineGeometry = new THREE.Geometry();
           var vertArray = lineGeometry.vertices;
-          vertArray.push( new THREE.Vector3(-chartwidth/2 - 1.5, yscale(t) + marginbottom, 0),
+
+          vertArray.push( new THREE.Vector3(-chartwidth/2 - 1, yscale(t) + marginbottom, 0),
                           new THREE.Vector3(chartwidth/2, yscale(t) + marginbottom, 0) );
+           // vertArray.push( new THREE.Vector3(-chartwidth/2 - 1, yscale(t) + marginbottom, 0),
+           //                new THREE.Vector3(chartwidth/2, yscale(t), 0) );
           lineGeometry.computeLineDistances();
-          var lineMaterial = new THREE.LineBasicMaterial( { color: "rgb(0, 0, 0)" } );
+          var lineMaterial = new THREE.LineBasicMaterial( 
+            
+            { 
+              color: "rgb(0, 0, 0)", 
+              linewidth: 3.5,
+              linejoin: "square"
+
+            } 
+          );
           // var lineMaterial = new THREE.LineBasicMaterial( { color: "rgb(255, 255, 255)" } );
           var line = new THREE.Line( lineGeometry, lineMaterial );
-          // line.renderDepth = 2;
           scene2.add(line);
 
         });
@@ -187,7 +192,6 @@
           var columngeo = new THREE.BoxGeometry(columnwidth, colheight, columnwidth);
           var columnmesh = new THREE.Mesh(columngeo, columnmaterial);
           columnmesh.position.set(xscale(i), colheight/2 + marginbottom, 0); //Box geometry is positioned at its’ center, so we need to move it up by half the height
-          // columnmesh.renderDepth = 1;
           scene.add(columnmesh);
         });
 
@@ -205,16 +209,16 @@
       title.position.set(-chartwidth/1.5, chartheight + 10, -5);
       scene.add(title);
 
-      var xzerolabel = createType({text: "1950", size: 1.2});
+      var xzerolabel = createType({text: "1950", size: 1});
       xzerolabel.position.set(-chartwidth/2 - 1, 2, 0);
       scene.add(xzerolabel);
 
-      var x100label = createType({text: "2014", size: 1.2});
+      var x100label = createType({text: "2014", size: 1});
       var xOffset = ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       x100label.position.set(chartwidth/2 - xOffset, 2, 0);
       scene.add(x100label);
 
-      var srctext = createType({text: "Sauce: SIPRI Arms Transfers Database", size: 1});
+      var srctext = createType({text: "Source: SIPRI Arms Transfers Database", size: 1});
       var xOffset = 0.5 * ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       srctext.position.set(0 - xOffset, 1, 0);
       scene.add(srctext);
@@ -244,11 +248,11 @@
 
     function render(dt) {
       // renderer.render(scene, camera);
-      // effect.render(scene, camera);
-    renderer.clear();
-    renderer.render( scene, camera );
-    renderer.clearDepth();
-    renderer.render( scene2, camera );
+      // effect.render(scene, scene2, camera);
+      renderer.clear();
+      renderer.render( scene, camera );
+      renderer.clearDepth();
+      renderer.render( scene2, camera );
     }
 
     function animate(t) {
