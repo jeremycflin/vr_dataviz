@@ -23,14 +23,14 @@
   <body>
     <div id="container"></div>
 
-  
   <script src="js/third-party/threejs/three.js"></script>
  <!--<script src="js/third-party/threejs/StereoEffect.js"></script>
   <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>-->
   <script src="js/third-party/threejs/OrbitControls.js"></script>
   <script src="js/optimer_bold.typeface.js"></script>
    <!--<script src="js/optimer_regular.typeface.js"></script>-->
-   <script src="js/helvetiker_regular.typeface.js"></script>-->
+  <script src="js/helvetiker_regular.typeface.js"></script>
+
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
   <script>
@@ -71,9 +71,16 @@
         camera.position.x ,
         camera.position.y + 0.1,
         camera.position.z - 0.1
+
+        // camera.position.x + 0.1 ,
+        // camera.position.y  - 8,
+        // camera.position.z + 0.5
+
       );
       controls.noZoom = false;
-      controls.noPan = true;
+      controls.noPan = false;
+      controls.zoomSpeed = 1.5;
+      // controls.autoRotate = true;
 
       function setOrientationControls(e) {
         if (!e.alpha) {
@@ -140,7 +147,7 @@
       /////// START CONTENT HERE ////////
 
       d3.csv('data.csv', arms, function(data){
-        xscale.domain([0, data.length ]);
+        xscale.domain([0, data.length - 1]);
         // yscale.domain([0, d3.max(data, function(d){ return d.value; })]);
 
         // xscale.domain(d3.extent(data, function(d) { return d.year -1; }));
@@ -187,20 +194,19 @@
         });
 
 
-        xscale.ticks(10).forEach(function(t, i, a){
-          //Draw label
-          var label = createType({
-            color: "rgb(255, 255, 255)",
-            text: "" + (t), 
-            size: 1
-          });
-          var xOffset = ( label.geometry.boundingBox.max.x - label.geometry.boundingBox.min.x );
-          // label2.position.set(-chartwidth/2 - 2, xscale(t) , 0);
-          label.position.set(xscale(t), 0 + marginbottom, 0);
-          scene2.add(label);
+        // xscale.ticks(10).forEach(function(t, i, a){
+        //   //Draw label
+        //   var label = createType({
+        //     // color: "rgb(255, 255, 255)",
+        //     text: "" + (t), 
+        //     size: 1
+        //   });
+        //   var xOffset = ( label.geometry.boundingBox.max.x - label.geometry.boundingBox.min.x );
+        //   label.position.set(xscale(t), 0 + marginbottom, 0);
+        //   scene2.add(label);
 
 
-        });
+        // });
 
 
         data.forEach(function(d, i, a){
@@ -227,17 +233,17 @@
 
       var xzerolabel = createType({text: "1950", size: 1});
       xzerolabel.position.set(-chartwidth/2 - 1.5, 2, 0);
-      // scene.add(xzerolabel);
+      scene.add(xzerolabel);
 
       var x100label = createType({text: "2014", size: 1});
       var xOffset = ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       x100label.position.set(chartwidth/2 - xOffset, 2, 0);
-      // scene.add(x100label);
+      scene.add(x100label);
 
       var srctext = createType({text: "Source: SIPRI Arms Transfers Database", size: 1});
       var xOffset = 0.5 * ( x100label.geometry.boundingBox.max.x - x100label.geometry.boundingBox.min.x );
       srctext.position.set(0 - xOffset, 1, 0);
-      // scene.add(srctext);
+      scene.add(srctext);
 
     }
 
